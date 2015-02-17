@@ -1,21 +1,25 @@
+# coding: utf-8
 
 import sys
 
 sys.path.insert(0, '../')
 
-from mongo_handler.handler import Handler, Process
+from mongo_handler import Handler
 from mongo_handler.db import MongoHandler, SQLAlchemyHandler
 
 
 class Config(object):
 
     MYSQL_DATABASE = {
-        'default': 'mysql://root:@localhost/mongo_handler'
+        'default': 'mysql://root:@localhost/mongo_handler',
+        'other': 'mysql://root:@localhost/armada'
     }
 
     MONGO_DATABASE = {
         'default': 'mongodb://localhost:27017/'
     }
+
+    SOME_KEY = False
 
 
 class DevelopConfig(Config):
@@ -23,18 +27,26 @@ class DevelopConfig(Config):
 
 handler = Handler()
 
+# Регистрируем первоначальные настройки для соединения с бд и др.
 handler.config.from_object(DevelopConfig)
 handler.config.from_dict({
-    'SOME_KEY': 'some value'
+    'SOME_KEY_DICT': 'some value'
 })
 
+# Регистрируем соединения с бд, используя конфиг
 handler.context_register(
     mongo=MongoHandler(handler.config['MONGO_DATABASE']),
-    mysql=SQLAlchemyHandler(handler.config['MYSQL_DATABASE'])
+    mysql=SQLAlchemyHandler(handler.config['MYSQL_DATABASE']),
 )
+
+# Добавляем обработчики
+from example.process import MongoToMysql
 handler.process_register(
-    'example.entries.article.Article',
+    MongoToMysql,
+    'example.process.MysqlToMysql',
+    (MongoToMysql, {'SOME_KEY': True})
 )
 
 if __name__ == '__main__':
+    # Запускаем обработчики
     handler.run()
