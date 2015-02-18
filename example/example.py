@@ -12,7 +12,7 @@ from mongo_handler.db.alchemy import SQLAlchemyHandler
 class Config(object):
 
     MYSQL_DATABASE = {
-        'default': 'mysql://roots:@localhost/mongo_handler',
+        'default': 'mysql://root:@localhost/mongo_handler',
         'other': 'mysql://root:@localhost/armada'
     }
 
