@@ -5,13 +5,14 @@ import sys
 sys.path.insert(0, '../')
 
 from mongo_handler import Handler
-from mongo_handler.db import MongoHandler, SQLAlchemyHandler
+from mongo_handler.db.mongo import MongoHandler
+from mongo_handler.db.alchemy import SQLAlchemyHandler
 
 
 class Config(object):
 
     MYSQL_DATABASE = {
-        'default': 'mysql://root:@localhost/mongo_handler',
+        'default': 'mysql://roots:@localhost/mongo_handler',
         'other': 'mysql://root:@localhost/armada'
     }
 
@@ -29,7 +30,7 @@ handler = Handler()
 
 # Регистрируем первоначальные настройки для соединения с бд и др.
 handler.config.from_object(DevelopConfig)
-handler.config.from_dict({
+handler.config.update({
     'SOME_KEY_DICT': 'some value'
 })
 

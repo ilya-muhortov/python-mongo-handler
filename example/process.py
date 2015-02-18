@@ -1,5 +1,4 @@
 
-
 from mongo_handler import Process
 from sqlalchemy.orm import sessionmaker
 
